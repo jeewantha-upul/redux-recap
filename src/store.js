@@ -1,12 +1,37 @@
-import { createStore } from "redux";
+import { createStore, combineReducers } from "redux";
 
-const initialState = {
+const accountInitialState = {
   balance: 0,
   loan: 0,
   loanPourpose: "",
 };
 
-const reducer = (state = initialState, action) => {
+const userInitialState = {
+  fullName: "",
+  nationalID: "",
+  createdAt: "",
+};
+
+const userReducer = (state = userInitialState, action) => {
+  switch (action.type) {
+    case "user/createUser":
+      return {
+        ...state,
+        fullName: action.payload.fullName,
+        nationalID: action.payload.nationalId,
+        createdAt: action.payload.createdAt,
+      };
+    case "user/updateUser":
+      return {
+        ...state,
+        fullName: action.payload.fullName,
+      };
+    default:
+      return state;
+  }
+};
+
+const accountReducer = (state = accountInitialState, action) => {
   switch (action.type) {
     case "account/deposit":
       return {
@@ -36,8 +61,13 @@ const reducer = (state = initialState, action) => {
   }
 };
 
-const store = createStore(reducer);
+const rootReducer = combineReducers({
+  account: accountReducer,
+  user: userReducer,
+});
+const store = createStore(rootReducer);
 
+// action creatores related to account
 const deposit = (amount) => {
   return { type: "account/deposit", payload: amount };
 };
@@ -56,7 +86,27 @@ const payLoan = () => {
   };
 };
 
-// dispatching actions after creating action creators
+// action creatores related to user
+const createUser = (name, id) => {
+  return {
+    type: "user/createUser",
+    payload: {
+      fullName: name,
+      nationalId: id,
+      createdAt: Date.now(),
+    },
+  };
+};
+const updateUser = (name) => {
+  return {
+    type: "user/updateUser",
+    payload: {
+      fullName: name,
+    },
+  };
+};
+
+// dispatching account actions
 store.dispatch(deposit(5000));
 console.log(store.getState());
 store.dispatch(withdraw(1000));
@@ -64,6 +114,12 @@ console.log(store.getState());
 store.dispatch(loanRequest(3000, "Buy a house"));
 console.log(store.getState());
 store.dispatch(payLoan());
+console.log(store.getState());
+
+// dispatching account actions
+store.dispatch(createUser("Jeewantha", "970284044V"));
+console.log(store.getState());
+store.dispatch(updateUser("Nimantha"));
 console.log(store.getState());
 
 // dispatching actions before creating action creators
