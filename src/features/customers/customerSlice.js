@@ -4,7 +4,7 @@ const userInitialState = {
   createdAt: "",
 };
 
-const userReducer = (state = userInitialState, action) => {
+const customerReducer = (state = userInitialState, action) => {
   switch (action.type) {
     case "user/createUser":
       return {
@@ -43,4 +43,4 @@ export const updateUser = (name) => {
   };
 };
 
-export default userReducer;
+export default customerReducer;
