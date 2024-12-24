@@ -15,12 +15,16 @@ function AccountOperations() {
   const [currency, setCurrency] = useState("USD");
 
   const dispatch = useDispatch();
-  const account = useSelector((store) => store.account);
+  const {
+    loan,
+    loanPurpose: pourpose,
+    isLoading,
+  } = useSelector((store) => store.account);
 
   function handleDeposit() {
     if (!depositAmount) return;
 
-    dispatch(deposit(depositAmount));
+    dispatch(deposit(depositAmount, currency));
     setDepositAmount("");
   }
 
@@ -94,10 +98,16 @@ function AccountOperations() {
           <button onClick={handleRequestLoan}>Request loan</button>
         </div>
 
-        <div>
-          <span>Pay back {account.loan}</span>
-          <button onClick={handlePayLoan}>Pay loan</button>
-        </div>
+        {loan > 0 && (
+          <div>
+            <span>
+              Pay back ${loan} ({pourpose})
+            </span>
+            <button onClick={handlePayLoan} disabled={isLoading}>
+              {isLoading ? "Converting..." : "Pay loan"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
